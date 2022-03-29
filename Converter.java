@@ -13,17 +13,17 @@ public class Converter  extends JFrame{
   private JLabel lblTitulo1, lblTitulo2, lblTitulo3, lblTitulo4;
   private JTextField txtnFrames;
   //2
-  private JLabel lblOpc0, lblOpc1, lblOpc2, lblOpc3, lblOpc4, lblOpc5, lblOpc6, lblOpc7, lblOpc8, lblOpc9;
+  private JLabel lblIND1, lblACK, lblENQ, lblCTR, lblDAT, lblPPT, lblLPT, lblNUM, lblINF, lblIND2;
   //3
-  private JTextField txtOpc0, txtOpc1,txtOpc2,txtOpc3,txtOpc4,txtOpc5, txtOpc6, txtOpc7,txtOpc8,txtOpc9;
+  private JTextField txtIND1, txtACK,txtENQ,txtCTR,txtDAT,txtPPT, txtLPT, txtNUM,txtINF,txtIND2;
   private JTextArea lblHistorial;
   //4
-  private JCheckBox chbOpc1, chbOpc2, chbOpc3,chbOpc4, chbOpc5, chbOpc6;
-  private JButton btnEnviar;
+  public JCheckBox chkACK, chkENQ, chkCTR,chkDAT, chkPPT, chkLPT;
+  public JButton btnEnviar;
   //5 6 7
-  private JLabel lblTitulo5, lblTitulo6,lblTitulo7;
+  private JLabel lblTramaTrans, lblTitulo6,lblTitulo7;
   //8
-  private JTextArea txtATR1, txtATR2,txtATR3,txtATR4;
+  public JTextArea txtHeader, txtATR2,txtATR3,txtTrailer;
   //9
   private JLabel lblHeader, lblInfo, lblTrailer;
   //10
@@ -31,18 +31,20 @@ public class Converter  extends JFrame{
   //11
   private JLabel lblOpc10 ,lblOpc11, lblOpc12, lblOpc13, lblOpc14, lblOpc15, lblOpc16, lblOpc17, lblOpc18, lblOpc19;
   //12
-  private JTextArea txtOpc10, txtOpc11,txtOpc12,txtOpc13,txtOpc14,txtOpc15, txtOpc16, txtOpc17,txtOpc18,txtOpc19;
-  private JButton btnResponder;
+  private JTextArea txtRIND1, txtRACK,txtRENQ,txtRCTR,txtRDAT,txtRPPT, txtRLPT, txtRNUM,txtRINF,txtRIND2;
+  public JButton btnResponder;
   //13
   private JLabel lblTramaRecibida;
   //14
   private JLabel lblMsjRecibido;
   private JTextArea txtMsjRecibido;
-  public Converter() {
   
-    super("Transmisor / receptor");
+  private int itera;
+  public Converter() {
+    
+    super("Protocolo de transmisión de datos");
     //1 Nivel
-    txtMensajeTranscribir = new JTextField(12);
+    txtMensajeTranscribir = new JTextField(15);
     //2 Nivel
     lblTitulo1 = new JLabel("TRANSMISOR");
     lblTitulo1.setFont(new Font("Serif", Font.PLAIN, 1));
@@ -53,55 +55,54 @@ public class Converter  extends JFrame{
 
     lblTitulo4 = new JLabel("Secuencia de tramas");
     //3 Nivel
-    lblOpc0 = new JLabel("Indicador");
-    lblOpc1 = new JLabel("ACK");
-    lblOpc2 = new JLabel("ENQ");
-    lblOpc3 = new JLabel("CTR");
-    lblOpc4 = new JLabel("DAT");
-    lblOpc5 = new JLabel("PPT");
-    lblOpc6 = new JLabel("LPT");
-    lblOpc7 = new JLabel("NUM");
-    lblOpc8 = new JLabel("INFORMACIÓN");
-    lblOpc9 = new JLabel("INDICAROR");
+    lblIND1 = new JLabel("Indicador");
+    lblACK = new JLabel("ACK");
+    lblENQ = new JLabel("ENQ");
+    lblCTR = new JLabel("CTR");
+    lblDAT = new JLabel("DAT");
+    lblPPT = new JLabel("PPT");
+    lblLPT = new JLabel("LPT");
+    lblNUM = new JLabel("NUM");
+    lblINF = new JLabel("INFORMACIÓN");
+    lblIND2 = new JLabel("INDICAROR");
     
     lblHistorial = new JTextArea(20, 17); 
-    lblHistorial.setBackground(Color.BLUE);
 
 
     //4 Nivel
-    txtOpc0 = new JTextField(10);
-    txtOpc1 = new JTextField(1);
-    txtOpc2 = new JTextField(1);
-    txtOpc3 = new JTextField(1);
-    txtOpc4 = new JTextField(1);
-    txtOpc5 = new JTextField(1);
-    txtOpc6 = new JTextField(1);
-    txtOpc7 = new JTextField(1);
-    txtOpc8 = new JTextField(1);
-    txtOpc9 = new JTextField(7);
+    txtIND1 = new JTextField(7);
+    txtACK = new JTextField(1);
+    txtENQ = new JTextField(1);
+    txtCTR = new JTextField(1);
+    txtDAT = new JTextField(1);
+    txtPPT = new JTextField(1);
+    txtLPT = new JTextField(1);
+    txtNUM = new JTextField(1);
+    txtINF = new JTextField(10);
+    txtIND2 = new JTextField(7);
     btnEnviar = new JButton("Enviar");
     btnEnviar.setMnemonic(KeyEvent.VK_V);
 
     //5 nivel
-    chbOpc1 = new JCheckBox();
-    chbOpc2 = new JCheckBox();
-    chbOpc3 = new JCheckBox();
-    chbOpc4 = new JCheckBox();
-    chbOpc5 = new JCheckBox();
-    chbOpc6 = new JCheckBox();
+    chkACK = new JCheckBox();
+    chkENQ = new JCheckBox();
+    chkCTR = new JCheckBox();
+    chkDAT = new JCheckBox();
+    chkPPT = new JCheckBox();
+    chkLPT = new JCheckBox();
 
     //6 nivel
-    lblTitulo5 = new JLabel("Semantica de trama");
+    lblTramaTrans = new JLabel("Semantica de trama");
     //7 nivel
     lblTitulo6 = new JLabel("RECEPTOR");
     //8 nivel
     lblTitulo7 = new JLabel("Trama recibida");
     //9 nivel
-    txtATR1 = new JTextArea(1,15);
+    txtHeader = new JTextArea(1,15);
     txtATR2 = new JTextArea(1,15);
     txtATR2.setSelectionColor(Color.red);
     txtATR3 = new JTextArea(1,15);
-    txtATR4 = new JTextArea(1,15);
+    txtTrailer = new JTextArea(1,15);
     //10 nivel
     lblHeader = new JLabel("Header");
     lblInfo = new JLabel("Información");
@@ -120,20 +121,20 @@ public class Converter  extends JFrame{
     lblOpc18 = new JLabel("INFORMACIÓN");
     lblOpc19 = new JLabel("INDICAROR");
     //13 nivel
-    txtOpc10 = new JTextArea(1,1);
-    txtOpc11 = new JTextArea(1,1);
-    txtOpc12 = new JTextArea(1,1);
-    txtOpc13 = new JTextArea(1,1);
-    txtOpc14 = new JTextArea(1,1);
-    txtOpc15 = new JTextArea(1,1);
-    txtOpc16 = new JTextArea(1,1);
-    txtOpc17 = new JTextArea(1,1);
-    txtOpc18 = new JTextArea(1,1);
-    txtOpc19 = new JTextArea(1,1);
+    txtRIND1 = new JTextArea(1,1);
+    txtRACK = new JTextArea(1,1);
+    txtRENQ = new JTextArea(1,1);
+    txtRCTR = new JTextArea(1,1);
+    txtRDAT = new JTextArea(1,1);
+    txtRPPT = new JTextArea(1,1);
+    txtRLPT = new JTextArea(1,1);
+    txtRNUM = new JTextArea(1,1);
+    txtRINF = new JTextArea(1,1);
+    txtRIND2 = new JTextArea(1,1);
     btnResponder = new JButton("Responder");
     btnResponder.setMnemonic(KeyEvent.VK_V);
     //14 nivel
-    lblTramaRecibida = new JLabel("Semánitca trama de control");
+    lblTramaRecibida = new JLabel("Semántica trama de control");
     //15 nivel
     lblMsjRecibido = new JLabel("Mensaje recibido:");
     txtMsjRecibido = new JTextArea(1,1);
@@ -141,7 +142,7 @@ public class Converter  extends JFrame{
 
     ButtonHandler objButtonHandler = new ButtonHandler(this);
 
-    btnEnviar.addActionListener(new ButtonHandler());
+    btnEnviar.addActionListener(objButtonHandler);
     btnResponder.addActionListener(objButtonHandler);
 
     JPanel UIPanelTrans = new JPanel();
@@ -158,41 +159,41 @@ public class Converter  extends JFrame{
     UIPanelTrans.add(lblTitulo4);
     UIPanelTrans.add(txtnFrames);
     UIPanelTrans.add(lblHistorial);
-    UIPanelTrans.add(lblOpc0);
-    UIPanelTrans.add(lblOpc1);
-    UIPanelTrans.add(lblOpc2);
-    UIPanelTrans.add(lblOpc3);
-    UIPanelTrans.add(lblOpc4);
-    UIPanelTrans.add(lblOpc5);
-    UIPanelTrans.add(lblOpc6);
-    UIPanelTrans.add(lblOpc7);
-    UIPanelTrans.add(lblOpc8);
-    UIPanelTrans.add(lblOpc9);
-    UIPanelTrans.add(txtOpc0);
-    UIPanelTrans.add(txtOpc1);
-    UIPanelTrans.add(txtOpc2);
-    UIPanelTrans.add(txtOpc3);
-    UIPanelTrans.add(txtOpc4);
-    UIPanelTrans.add(txtOpc5);
-    UIPanelTrans.add(txtOpc6);
-    UIPanelTrans.add(txtOpc7);
-    UIPanelTrans.add(txtOpc8);
-    UIPanelTrans.add(txtOpc9);
+    UIPanelTrans.add(lblIND1);
+    UIPanelTrans.add(lblACK);
+    UIPanelTrans.add(lblENQ);
+    UIPanelTrans.add(lblCTR);
+    UIPanelTrans.add(lblDAT);
+    UIPanelTrans.add(lblPPT);
+    UIPanelTrans.add(lblLPT);
+    UIPanelTrans.add(lblNUM);
+    UIPanelTrans.add(lblINF);
+    UIPanelTrans.add(lblIND2);
+    UIPanelTrans.add(txtIND1);
+    UIPanelTrans.add(txtACK);
+    UIPanelTrans.add(txtENQ);
+    UIPanelTrans.add(txtCTR);
+    UIPanelTrans.add(txtDAT);
+    UIPanelTrans.add(txtPPT);
+    UIPanelTrans.add(txtLPT);
+    UIPanelTrans.add(txtNUM);
+    UIPanelTrans.add(txtINF);
+    UIPanelTrans.add(txtIND2);
     UIPanelTrans.add(btnEnviar);
-    UIPanelTrans.add(chbOpc1);
-    UIPanelTrans.add(chbOpc2);
-    UIPanelTrans.add(chbOpc3);
-    UIPanelTrans.add(chbOpc4);
-    UIPanelTrans.add(chbOpc5);
-    UIPanelTrans.add(chbOpc6);
-    UIPanelTrans.add(lblTitulo5);
+    UIPanelTrans.add(chkACK);
+    UIPanelTrans.add(chkENQ);
+    UIPanelTrans.add(chkCTR);
+    UIPanelTrans.add(chkDAT);
+    UIPanelTrans.add(chkPPT);
+    UIPanelTrans.add(chkLPT);
+    UIPanelTrans.add(lblTramaTrans);
 
     UIPanelTrans.add(lblTitulo6);
     UIPanelTrans.add(lblTitulo7);
-    UIPanelTrans.add(txtATR1);
+    UIPanelTrans.add(txtHeader);
     UIPanelTrans.add(txtATR2);
     UIPanelTrans.add(txtATR3);
-    UIPanelTrans.add(txtATR4);
+    UIPanelTrans.add(txtTrailer);
 
     UIPanelTrans.add(lblHeader);
     UIPanelTrans.add(lblInfo);
@@ -210,16 +211,16 @@ public class Converter  extends JFrame{
     UIPanelTrans.add(lblOpc17);
     UIPanelTrans.add(lblOpc18);
     UIPanelTrans.add(lblOpc19);
-    UIPanelTrans.add(txtOpc10);
-    UIPanelTrans.add(txtOpc11);
-    UIPanelTrans.add(txtOpc12);
-    UIPanelTrans.add(txtOpc13);
-    UIPanelTrans.add(txtOpc14);
-    UIPanelTrans.add(txtOpc15);
-    UIPanelTrans.add(txtOpc16);
-    UIPanelTrans.add(txtOpc17);
-    UIPanelTrans.add(txtOpc18);
-    UIPanelTrans.add(txtOpc19);
+    UIPanelTrans.add(txtRIND1);
+    UIPanelTrans.add(txtRACK);
+    UIPanelTrans.add(txtRENQ);
+    UIPanelTrans.add(txtRCTR);
+    UIPanelTrans.add(txtRDAT);
+    UIPanelTrans.add(txtRPPT);
+    UIPanelTrans.add(txtRLPT);
+    UIPanelTrans.add(txtRNUM);
+    UIPanelTrans.add(txtRINF);
+    UIPanelTrans.add(txtRIND2);
 
     UIPanelTrans.add(btnResponder);
 
@@ -241,7 +242,7 @@ public class Converter  extends JFrame{
     gridbag.setConstraints(lblTitulo2, gbc);
     gbc.gridx = 1;
     gbc.gridy = 1;
-    gbc.gridwidth = 6;
+    gbc.gridwidth = 10;
     gridbag.setConstraints(txtMensajeTranscribir, gbc);
     gbc.gridwidth = 1;
     gbc.gridx = 2;
@@ -254,69 +255,69 @@ public class Converter  extends JFrame{
     gbc.gridy = 1;
     gridbag.setConstraints(lblTitulo4, gbc);
 
-
+    
     gbc.gridx = 0;
     gbc.gridy = 2;
-    gridbag.setConstraints(lblOpc0, gbc);
+    gridbag.setConstraints(lblIND1, gbc);
     gbc.gridx = 1;
     gbc.gridy = 2;
-    gridbag.setConstraints(lblOpc1, gbc);
+    gridbag.setConstraints(lblACK, gbc);
     gbc.gridx = 2;
     gbc.gridy = 2;
-    gridbag.setConstraints(lblOpc2, gbc);
+    gridbag.setConstraints(lblENQ, gbc);
     gbc.gridx = 3;
     gbc.gridy = 2;
-    gridbag.setConstraints(lblOpc3, gbc);
+    gridbag.setConstraints(lblCTR, gbc);
     gbc.gridx = 4;
     gbc.gridy = 2;
-    gridbag.setConstraints(lblOpc4, gbc);
+    gridbag.setConstraints(lblDAT, gbc);
     gbc.gridx = 5;
     gbc.gridy = 2;
-    gridbag.setConstraints(lblOpc5, gbc);
+    gridbag.setConstraints(lblPPT, gbc);
     gbc.gridx = 6;
     gbc.gridy = 2;
-    gridbag.setConstraints(lblOpc6, gbc);
+    gridbag.setConstraints(lblLPT, gbc);
     gbc.gridx = 7;
     gbc.gridy = 2;
-    gridbag.setConstraints(lblOpc7, gbc);
+    gridbag.setConstraints(lblNUM, gbc);
     gbc.gridx = 8;
     gbc.gridy = 2;
-    gridbag.setConstraints(lblOpc8, gbc);
+    gridbag.setConstraints(lblINF, gbc);
     gbc.gridx = 9;
     gbc.gridy = 2;
-    gridbag.setConstraints(lblOpc9, gbc);
+    gridbag.setConstraints(lblIND2, gbc);
 
 
     gbc.gridx = 0;
     gbc.gridy = 3;
-    gridbag.setConstraints(txtOpc0, gbc);
+    gridbag.setConstraints(txtIND1, gbc);
     gbc.gridx = 1;
     gbc.gridy = 3;
-    gridbag.setConstraints(txtOpc1, gbc);
+    gridbag.setConstraints(txtACK, gbc);
     gbc.gridx = 2;
     gbc.gridy = 3;
-    gridbag.setConstraints(txtOpc2, gbc);
+    gridbag.setConstraints(txtENQ, gbc);
     gbc.gridx = 3;
     gbc.gridy = 3;
-    gridbag.setConstraints(txtOpc3, gbc);
+    gridbag.setConstraints(txtCTR, gbc);
     gbc.gridx = 4;
     gbc.gridy = 3;
-    gridbag.setConstraints(txtOpc4, gbc);
+    gridbag.setConstraints(txtDAT, gbc);
     gbc.gridx = 5;
     gbc.gridy = 3;
-    gridbag.setConstraints(txtOpc5, gbc);
+    gridbag.setConstraints(txtPPT, gbc);
     gbc.gridx = 6;
     gbc.gridy = 3;
-    gridbag.setConstraints(txtOpc6, gbc);
+    gridbag.setConstraints(txtLPT, gbc);
     gbc.gridx = 7;
     gbc.gridy = 3;
-    gridbag.setConstraints(txtOpc7, gbc);
+    gridbag.setConstraints(txtNUM, gbc);
     gbc.gridx = 8;
     gbc.gridy = 3;
-    gridbag.setConstraints(txtOpc8, gbc);
+    gridbag.setConstraints(txtINF, gbc);
     gbc.gridx = 9;
     gbc.gridy = 3;
-    gridbag.setConstraints(txtOpc9, gbc);
+    gridbag.setConstraints(txtIND2, gbc);
     gbc.gridx = 10;
     gbc.gridy = 3;
     gridbag.setConstraints(btnEnviar, gbc);
@@ -328,26 +329,26 @@ public class Converter  extends JFrame{
     gbc.gridheight = 1;
     gbc.gridx = 1;
     gbc.gridy = 4;
-    gridbag.setConstraints(chbOpc1, gbc);
+    gridbag.setConstraints(chkACK, gbc);
     gbc.gridx = 2;
     gbc.gridy = 4;
-    gridbag.setConstraints(chbOpc2, gbc);
+    gridbag.setConstraints(chkENQ, gbc);
     gbc.gridx = 3;
     gbc.gridy = 4;
-    gridbag.setConstraints(chbOpc3, gbc);
+    gridbag.setConstraints(chkCTR, gbc);
     gbc.gridx = 4;
     gbc.gridy = 4;
-    gridbag.setConstraints(chbOpc4, gbc);
+    gridbag.setConstraints(chkDAT, gbc);
     gbc.gridx = 5;
     gbc.gridy = 4;
-    gridbag.setConstraints(chbOpc5, gbc);
+    gridbag.setConstraints(chkPPT, gbc);
     gbc.gridx = 6;
     gbc.gridy = 4;
-    gridbag.setConstraints(chbOpc6, gbc);
+    gridbag.setConstraints(chkLPT, gbc);
 
     gbc.gridx = 2;
     gbc.gridy = 5;
-    gridbag.setConstraints(lblTitulo5, gbc);
+    gridbag.setConstraints(lblTramaTrans, gbc);
    
 
    
@@ -361,7 +362,7 @@ public class Converter  extends JFrame{
     
     gbc.gridx = 0;
     gbc.gridy = 8;
-    gridbag.setConstraints(txtATR1, gbc);
+    gridbag.setConstraints(txtHeader, gbc);
     gbc.gridx = 1;
     gbc.gridy = 8;
     gridbag.setConstraints(txtATR2, gbc);
@@ -371,7 +372,7 @@ public class Converter  extends JFrame{
     gridbag.setConstraints(txtATR3, gbc);
     gbc.gridx = 3;
     gbc.gridy = 8;
-    gridbag.setConstraints(txtATR4, gbc);
+    gridbag.setConstraints(txtTrailer, gbc);
 
     gbc.gridx = 0;
     gbc.gridy = 9;
@@ -420,34 +421,34 @@ public class Converter  extends JFrame{
   
     gbc.gridx = 0;
     gbc.gridy = 12;
-    gridbag.setConstraints(txtOpc10, gbc);
+    gridbag.setConstraints(txtRIND1, gbc);
     gbc.gridx = 1;
     gbc.gridy = 12;
-    gridbag.setConstraints(txtOpc11, gbc);
+    gridbag.setConstraints(txtRACK, gbc);
     gbc.gridx = 2;
     gbc.gridy = 12;
-    gridbag.setConstraints(txtOpc12, gbc);
+    gridbag.setConstraints(txtRENQ, gbc);
     gbc.gridx = 3;
     gbc.gridy = 12;
-    gridbag.setConstraints(txtOpc13, gbc);
+    gridbag.setConstraints(txtRCTR, gbc);
     gbc.gridx = 4;
     gbc.gridy = 12;
-    gridbag.setConstraints(txtOpc14, gbc);
+    gridbag.setConstraints(txtRDAT, gbc);
     gbc.gridx = 5;
     gbc.gridy = 12;
-    gridbag.setConstraints(txtOpc15, gbc);
+    gridbag.setConstraints(txtRPPT, gbc);
     gbc.gridx = 6;
     gbc.gridy = 12;
-    gridbag.setConstraints(txtOpc16, gbc);
+    gridbag.setConstraints(txtRLPT, gbc);
     gbc.gridx = 7;
     gbc.gridy = 12;
-    gridbag.setConstraints(txtOpc17, gbc);
+    gridbag.setConstraints(txtRNUM, gbc);
     gbc.gridx = 8;
     gbc.gridy = 12;
-    gridbag.setConstraints(txtOpc18, gbc);
+    gridbag.setConstraints(txtRINF, gbc);
     gbc.gridx = 9;
     gbc.gridy = 12;
-    gridbag.setConstraints(txtOpc19, gbc);
+    gridbag.setConstraints(txtRIND2, gbc);
     gbc.gridx = 10;
     gbc.gridy = 12;
     gridbag.setConstraints(btnResponder, gbc);
@@ -472,7 +473,7 @@ public class Converter  extends JFrame{
     //Add the buttons and the log to the frame
     Container contentPane = getContentPane();
     contentPane.add(UIPanelTrans, BorderLayout.CENTER);
-
+    intialize();
     try {
       UIManager.setLookAndFeel(new WindowsLookAndFeel());
       SwingUtilities.updateComponentTreeUI(
@@ -482,6 +483,131 @@ public class Converter  extends JFrame{
     }
 
   }
+
+  public void intialize (){
+    txtIND1.setText("10000001");
+    txtACK.setText("0");
+    txtENQ.setText("0");
+    txtLPT.setText("0");
+    txtPPT.setText("0");
+    txtDAT.setText("0");
+    txtNUM.setText("0");
+    txtCTR.setText("0");
+    txtINF.setText("EJEMPLO");
+    txtIND2.setText("10000001");
+    txtMensajeTranscribir.setText("Escriba aqui su mensaje");
+    txtnFrames.setText("X");
+    txtRIND1.setText("Ind1");
+    txtRACK.setText("0");
+    txtRENQ.setText("0");
+    txtRCTR.setText("0");
+    txtRDAT.setText("0");
+    txtRPPT.setText("0");
+    txtRLPT.setText("0");
+    txtRNUM.setText("0");
+    txtRINF.setText("Info");
+    txtRIND2.setText("Ind2");
+    btnResponder.setEnabled(false);
+    txtHeader.setText("------");
+    txtATR2.setText("------");
+    txtATR3.setText("------");
+    txtTrailer.setText("------");
+    itera = 0;
+  }
+  public int getACK(){
+    int x = Integer.parseInt(txtACK.getText());
+    return x;
+  }
+  public int getENQ(){
+    int x = Integer.parseInt(txtENQ.getText());
+    return x;
+  }
+  public int getIND2(){
+    int x = Integer.parseInt(txtIND2.getText());
+    return x;
+  }
+  public int getIND1(){
+    int x = Integer.parseInt(txtIND1.getText());
+    return x;
+  }
+  public int getCTR(){
+    int x = Integer.parseInt(txtCTR.getText());
+    return x;
+  }
+  public int getDAT(){
+    int x = Integer.parseInt(txtDAT.getText());
+    return x;
+  }
+  public int getLPT(){
+    int x = Integer.parseInt(txtLPT.getText());
+    return x;
+  }
+  public int getPPT(){
+    int x = Integer.parseInt(txtPPT.getText());
+    return x;
+  }
+  public int getNUM(){
+    int x = Integer.parseInt(txtNUM.getText());
+    return x;
+  }
+  public String getINF(){
+    String x = txtINF.getText();
+    return x;
+  } 
+
+  public void setRACK(String t){
+    txtRACK.setText(t);
+  }
+  public void setRENQ(String t){
+    txtRENQ.setText(t);
+  }
+  public void setRCTR(String t){
+    txtRCTR.setText(t);
+  }
+  public void setRLPT(String t){
+    txtRLPT.setText(t);
+  }
+  public void setRPPT(String t){
+    txtRPPT.setText(t);
+  }
+  public void setRDAT(String t){
+    txtRDAT.setText(t);
+  }
+  public void setRIND(String t){
+    txtRIND1.setText(t);
+    txtRIND2.setText(t);
+  }
+  public void setRNUM(String t){
+    txtRNUM.setText(t);
+  }
+  public void setRINF(String t){
+    txtRINF.setText(t);
+  }
+  public void setTTMessage( String msg){
+    lblTramaTrans.setText(msg);
+  }
+  public void setTRMessage( String msg){
+    lblTramaRecibida.setText(msg);
+  }
+  public void uploadH(int a, String t){
+    itera ++;
+    String cadena = "Trama " + itera;
+    if (a==1)
+      cadena += " (Tx)";
+    else
+      cadena += " (Rx)";
+    cadena+= "\n" + t + "\n";
+    lblHistorial.setText(lblHistorial.getText()+cadena);
+  }
+  public boolean casillasPermiso(){
+    if (chkPPT.isSelected() && chkCTR.isSelected() && !chkACK.isSelected() && !chkLPT.isSelected()
+    && !chkDAT.isSelected() && !chkENQ.isSelected()){
+      return true;
+    }
+    return false;
+  }
+
+
   public static void main(String[] args) {
     Converter conv = new Converter();
     
@@ -502,16 +628,68 @@ public class Converter  extends JFrame{
 
 class ButtonHandler implements ActionListener {
   Converter objConverter;
+  Trama tramaTransmisora;
+  Trama tramaReceptora;
+  int iteracion = 0;
   public void actionPerformed(ActionEvent e) {
-    String validationResult = null;
-    //System.out.println(e.getActionCommand());
+    iteracion ++;
     if (e.getActionCommand().equals("Enviar")) {
-      System.exit(1);
+      tramaTransmisora = new Trama(objConverter.getIND1(), objConverter.getACK(), 
+      objConverter.getENQ(), objConverter.getCTR(), objConverter.getDAT(), objConverter.getPPT(), objConverter.getLPT(), objConverter.getNUM(), objConverter.getINF());
+      if (tramaTransmisora.validate()){
+        if(tramaTransmisora.permissToT() && objConverter.casillasPermiso()){
+          //Caso en que se este pidiendo control
+          tranCase1();
+          tramaReceptora = tramaTransmisora;
+          objConverter.txtHeader.setText(Integer.toString(tramaReceptora.indicador));
+          tramaReceptora.tramaRdyToRive();
+          updateRecep(tramaReceptora);
+        }else{
+
+        }
+
+      } else 
+        System.out.println("Error en la trama");
+
     }
     if (e.getActionCommand().equals("Responder")) {
-      
+      if(tramaReceptora.validate()){
+        if (tramaReceptora.rdyToRecept()){
+          recepCase1();
+          
+        }
+      }
     }
   }
+
+
+  public void tranCase1 (){
+    objConverter.setTTMessage("Semántica: Trama de control, permiso para transmitir");
+    objConverter.btnEnviar.setEnabled(false);
+    objConverter.btnResponder.setEnabled(true);
+    objConverter.uploadH(1, "Control, permiso para transmitir");
+  }
+
+  public void recepCase1 (){
+    objConverter.setTRMessage("Semántica: Trama de control, listo para recibir");
+    objConverter.uploadH(0, "Control, listo para recibir");
+    objConverter.btnEnviar.setEnabled(true);
+    objConverter.btnResponder.setEnabled(false);
+  }
+  
+  public void updateRecep(Trama tm){
+    objConverter.setRACK(Integer.toString(tm.ACK));
+    objConverter.setRENQ(Integer.toString(tm.ENQ));
+    objConverter.setRCTR(Integer.toString(tm.CTR));
+    objConverter.setRPPT(Integer.toString(tm.PPT));
+    objConverter.setRLPT(Integer.toString(tm.LPT));
+    objConverter.setRNUM(Integer.toString(tm.NUM));
+    objConverter.setRDAT(Integer.toString(tm.DAT));
+    objConverter.setRIND(Integer.toString(tm.indicador));
+    objConverter.setRINF(tm.info);
+
+  }
+
   public ButtonHandler() {
   }
   public ButtonHandler(Converter inObjPRManager) {
@@ -520,3 +698,50 @@ class ButtonHandler implements ActionListener {
 
 } // End of class ButtonHandler
 
+class Trama {
+  int indicador, ACK, ENQ, CTR, DAT, PPT, LPT, NUM;
+  String info;
+
+  public Trama (int i, int ack, int enq, int ctr, int dat, int ppt, int lpt, int num, String info){
+    indicador=i;
+    ACK=ack;
+    this.ENQ=enq;
+    this.CTR = ctr;
+    this.LPT=lpt;
+    this.DAT=dat;
+    this.NUM=num;
+    this.PPT=ppt;
+    this.info=info;
+  }
+  public boolean validate(){
+    if (ACK>1 || ACK<0 ||ENQ>1 || ENQ<0 || CTR>1 || CTR<0 ||DAT>1 || DAT<0 || PPT>1 || PPT<0 ||LPT>1 || LPT<0){
+      return false;
+    }
+    return true;
+  }
+  public boolean permissToT(){
+    if (PPT == 1 && CTR==1){
+      return true;
+    }
+
+    return false;
+  }
+  public void tramaRdyToRive(){
+    ACK = 0;
+    ENQ = 0;
+    CTR = 1;
+    DAT = 0;
+    PPT = 0;
+    LPT = 1;
+    NUM = 0;
+
+  }
+
+  public boolean rdyToRecept(){
+    if (LPT == 1 && CTR==1){
+      return true;
+    }
+
+    return false;
+  }
+}
