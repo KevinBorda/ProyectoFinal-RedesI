@@ -2,8 +2,7 @@ import javax.swing.JFrame;
 
 import java.awt.*;
 import java.awt.event.*;
-
-import com.sun.java.swing.plaf.windows.*;
+import javax.swing.plaf.*;
 import javax.swing.*;
 
 public class Converter  extends JFrame{
@@ -477,7 +476,6 @@ public class Converter  extends JFrame{
     contentPane.add(UIPanelTrans, BorderLayout.CENTER);
     intialize();
     try {
-      UIManager.setLookAndFeel(new WindowsLookAndFeel());
       SwingUtilities.updateComponentTreeUI(
         Converter.this);
     } catch (Exception ex) {
@@ -592,6 +590,10 @@ public class Converter  extends JFrame{
   public void setTRMessage( String msg){
     lblTramaRecibida.setText(msg);
   }
+
+  public void setTRMessageRcb( String msg){
+    txtMsjRecibido.setText(msg);
+  }
   public void uploadH(int a, String t){
     itera ++;
     String cadena = "Trama " + itera;
@@ -609,6 +611,16 @@ public class Converter  extends JFrame{
     }
     return false;
   }
+
+  public boolean casillasTransmision(){
+    if (!chkPPT.isSelected() && !chkCTR.isSelected() && !chkACK.isSelected() && !chkLPT.isSelected()
+    && chkDAT.isSelected()){
+      return true;
+    }
+    return false;
+  }
+
+
 
   public void setInfoTramas(String[] x){
     infoTramas = x;
@@ -638,16 +650,20 @@ class ButtonHandler implements ActionListener {
   Trama tramaTransmisora;
   Trama tramaReceptora;
   int iteracion = 0;
+  String[] mensaje; 
+  String[] mensajeRecibido = new String[6];
   public void actionPerformed(ActionEvent e) {
-    
+    tramaTransmisora = new Trama(objConverter.getIND1(), objConverter.getACK(), 
+    objConverter.getENQ(), objConverter.getCTR(), objConverter.getDAT(), objConverter.getPPT(), objConverter.getLPT(), objConverter.getNUM(), objConverter.getINF());
     if (e.getActionCommand().equals("Enviar")) {
-      tramaTransmisora = new Trama(objConverter.getIND1(), objConverter.getACK(), 
-      objConverter.getENQ(), objConverter.getCTR(), objConverter.getDAT(), objConverter.getPPT(), objConverter.getLPT(), objConverter.getNUM(), objConverter.getINF());
+      System.out.println("nueva iteracion");
+
       if (tramaTransmisora.validate()){
         if(tramaTransmisora.permissToT() && objConverter.casillasPermiso()){
           //Caso en que se este pidiendo control
           if (iteracion < 1 ){
             tranCase1();
+            updateTramaRecibida(tramaTransmisora);            
             tramaReceptora = tramaTransmisora;
             objConverter.txtHeader.setText(Integer.toString(tramaReceptora.indicador));
             tramaReceptora.tramaRdyToRive();
@@ -656,10 +672,24 @@ class ButtonHandler implements ActionListener {
           }
           else 
             JOptionPane.showMessageDialog(null, "Permiso ya pedido anteriormente");
-        }else{
-
+        }else if (tramaTransmisora.txData() && objConverter.casillasTransmision()){
+          System.out.println("voy a transmitir");
+          //Caso en que se  transmita 
+          if ( mensaje == null || tramaTransmisora.NUM > mensaje.length ){
+            JOptionPane.showMessageDialog(null, "Frame no encontrado en el mensaje");
+          }else{
+            objConverter.txtINF.setText(mensaje[tramaTransmisora.NUM-1]);
+            tramaTransmisora.info = mensaje[tramaTransmisora.NUM-1];
+            tranCase2(tramaTransmisora.NUM);
+            updateTramaRecibida(tramaTransmisora);            
+            tramaReceptora = tramaTransmisora;
+            objConverter.txtHeader.setText(Integer.toString(tramaReceptora.indicador));
+            tramaReceptora.tramaRecibida();
+            updateRecep(tramaReceptora);
+            System.out.println("num: " + tramaReceptora.NUM);
+            iteracion ++;
+          }
         }
-
       } else 
         System.out.println("Error en la trama");
 
@@ -670,13 +700,37 @@ class ButtonHandler implements ActionListener {
           recepCase1();
           String msg = JOptionPane.showInputDialog(null, "Digite el mensaje a enviar");
           String[] ptes = msg.split(" ");
+          mensaje = ptes;
           objConverter.txtMensajeTranscribir.setText(msg);
           objConverter.setInfoTramas(ptes);
           String numF = Integer.toString(ptes.length);
           objConverter.txtnFrames.setText(numF);
+        }else if (tramaReceptora.recibida()){
+          System.out.println(tramaReceptora.ENQ);
+          if (tramaReceptora.ENQ == 0){
+            mensajeRecibido[tramaTransmisora.NUM-1] = tramaTransmisora.info;
+            String aux = "";
+            for (int i=0; i<mensajeRecibido.length; i++){
+              if(mensajeRecibido[i] !=null){
+                System.out.println(mensajeRecibido[i]);
+                aux = aux + mensajeRecibido[i] + " ";
+              }
+            }
+            objConverter.setTRMessageRcb(aux);
+            recepCase2(tramaTransmisora.NUM);
+          }else{
+            mensajeRecibido[tramaTransmisora.NUM-1] = tramaTransmisora.info;
+            String aux = "";
+            for (int i=0; i<mensajeRecibido.length; i++){
+              if(mensajeRecibido[i] !=null){
+                System.out.println(mensajeRecibido[i]);
+                aux = aux + mensajeRecibido[i] + " ";
+              }
+            }
+            objConverter.setTRMessageRcb(aux);
+            recepCase3(tramaTransmisora.NUM);
 
-
-
+          }
         }
       }
     }
@@ -690,13 +744,42 @@ class ButtonHandler implements ActionListener {
     objConverter.uploadH(1, "Control, permiso para transmitir");
   }
 
+  public void tranCase2 (int numTrama){
+    objConverter.setTTMessage("Semántica: Trama de datos");
+    objConverter.btnEnviar.setEnabled(false);
+    objConverter.btnResponder.setEnabled(true);
+    objConverter.uploadH(1, "Datos, Trama " + numTrama);
+  }
+
   public void recepCase1 (){
     objConverter.setTRMessage("Semántica: Trama de control, listo para recibir");
     objConverter.uploadH(0, "Control, listo para recibir");
     objConverter.btnEnviar.setEnabled(true);
     objConverter.btnResponder.setEnabled(false);
   }
+
+  public void recepCase2 (int numTrama){
+    objConverter.setTRMessage("Semántica: Trama de datos");
+    objConverter.uploadH(0, "Control, Trama " + numTrama);
+    objConverter.btnEnviar.setEnabled(true);
+    objConverter.btnResponder.setEnabled(false);
+  }
+
+  public void recepCase3 (int numTrama){
+    objConverter.setTRMessage("Semántica: Trama de datos");
+    objConverter.uploadH(0, "Control, Ultima Trama " + numTrama);
+    objConverter.uploadH(0, "Mensaje Recibido");
+    objConverter.btnEnviar.setEnabled(true);
+    objConverter.btnResponder.setEnabled(false);
+  }
   
+  public void updateTramaRecibida(Trama tramaRecibida){
+    String aux = "" + tramaRecibida.ACK + tramaRecibida.ENQ + tramaRecibida.CTR + tramaRecibida.DAT + tramaRecibida.PPT + tramaRecibida.LPT + tramaRecibida.NUM;
+    objConverter.txtHeader.setText(String.valueOf(tramaRecibida.indicador));
+    objConverter.txtATR2.setText(aux);
+    objConverter.txtATR3.setText(tramaRecibida.info);
+    objConverter.txtTrailer.setText((String.valueOf(tramaRecibida.indicador)));
+  }
   public void updateRecep(Trama tm){
     objConverter.setRACK(Integer.toString(tm.ACK));
     objConverter.setRENQ(Integer.toString(tm.ENQ));
@@ -743,9 +826,23 @@ class Trama {
     if (PPT == 1 && CTR==1){
       return true;
     }
-
     return false;
   }
+
+  public boolean txData(){
+    if (DAT == 1 && NUM != 0){
+      return true;
+    }
+    return false;
+  }
+
+  public boolean lastTxData(){
+    if (DAT == 1 && NUM != 0 && ENQ == 1){
+      return true;
+    }
+    return false;
+  }
+
   public void tramaRdyToRive(){
     ACK = 0;
     ENQ = 0;
@@ -754,14 +851,29 @@ class Trama {
     PPT = 0;
     LPT = 1;
     NUM = 0;
+  }
 
+  public void tramaRecibida(){
+    ACK = 1;
+    ENQ = 0;
+    CTR = 1;
+    DAT = 0;
+    PPT = 0;
+    LPT = 0;
+    NUM = 0;
   }
 
   public boolean rdyToRecept(){
     if (LPT == 1 && CTR==1){
       return true;
     }
+    return false;
+  }
 
+  public boolean recibida(){
+    if (ACK == 1 && CTR==1){
+      return true;
+    }
     return false;
   }
 }
