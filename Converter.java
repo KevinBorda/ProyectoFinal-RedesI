@@ -8,14 +8,14 @@ import javax.swing.*;
 
 public class Converter  extends JFrame{
   //0
-  private JTextField txtMensajeTranscribir;
+  public JTextField txtMensajeTranscribir;
   //1
   private JLabel lblTitulo1, lblTitulo2, lblTitulo3, lblTitulo4;
-  private JTextField txtnFrames;
+  public JTextField txtnFrames;
   //2
   private JLabel lblIND1, lblACK, lblENQ, lblCTR, lblDAT, lblPPT, lblLPT, lblNUM, lblINF, lblIND2;
   //3
-  private JTextField txtIND1, txtACK,txtENQ,txtCTR,txtDAT,txtPPT, txtLPT, txtNUM,txtINF,txtIND2;
+  public JTextField txtIND1, txtACK,txtENQ,txtCTR,txtDAT,txtPPT, txtLPT, txtNUM,txtINF,txtIND2;
   private JTextArea lblHistorial;
   //4
   public JCheckBox chkACK, chkENQ, chkCTR,chkDAT, chkPPT, chkLPT;
@@ -40,6 +40,8 @@ public class Converter  extends JFrame{
   private JTextArea txtMsjRecibido;
   
   private int itera;
+  private String[] infoTramas;
+
   public Converter() {
     
     super("Protocolo de transmisión de datos");
@@ -514,6 +516,7 @@ public class Converter  extends JFrame{
     txtTrailer.setText("------");
     itera = 0;
   }
+  
   public int getACK(){
     int x = Integer.parseInt(txtACK.getText());
     return x;
@@ -607,6 +610,10 @@ public class Converter  extends JFrame{
     return false;
   }
 
+  public void setInfoTramas(String[] x){
+    infoTramas = x;
+  }
+
 
   public static void main(String[] args) {
     Converter conv = new Converter();
@@ -632,18 +639,23 @@ class ButtonHandler implements ActionListener {
   Trama tramaReceptora;
   int iteracion = 0;
   public void actionPerformed(ActionEvent e) {
-    iteracion ++;
+    
     if (e.getActionCommand().equals("Enviar")) {
       tramaTransmisora = new Trama(objConverter.getIND1(), objConverter.getACK(), 
       objConverter.getENQ(), objConverter.getCTR(), objConverter.getDAT(), objConverter.getPPT(), objConverter.getLPT(), objConverter.getNUM(), objConverter.getINF());
       if (tramaTransmisora.validate()){
         if(tramaTransmisora.permissToT() && objConverter.casillasPermiso()){
           //Caso en que se este pidiendo control
-          tranCase1();
-          tramaReceptora = tramaTransmisora;
-          objConverter.txtHeader.setText(Integer.toString(tramaReceptora.indicador));
-          tramaReceptora.tramaRdyToRive();
-          updateRecep(tramaReceptora);
+          if (iteracion < 1 ){
+            tranCase1();
+            tramaReceptora = tramaTransmisora;
+            objConverter.txtHeader.setText(Integer.toString(tramaReceptora.indicador));
+            tramaReceptora.tramaRdyToRive();
+            updateRecep(tramaReceptora);
+            iteracion ++;
+          }
+          else 
+            JOptionPane.showMessageDialog(null, "Permiso ya pedido anteriormente");
         }else{
 
         }
@@ -656,7 +668,15 @@ class ButtonHandler implements ActionListener {
       if(tramaReceptora.validate()){
         if (tramaReceptora.rdyToRecept()){
           recepCase1();
-          
+          String msg = JOptionPane.showInputDialog(null, "Digite el mensaje a enviar");
+          String[] ptes = msg.split(" ");
+          objConverter.txtMensajeTranscribir.setText(msg);
+          objConverter.setInfoTramas(ptes);
+          String numF = Integer.toString(ptes.length);
+          objConverter.txtnFrames.setText(numF);
+
+
+
         }
       }
     }
