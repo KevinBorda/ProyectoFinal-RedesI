@@ -37,7 +37,7 @@ public class Converter  extends JFrame{
   //14
   private JLabel lblMsjRecibido;
   private JTextArea txtMsjRecibido;
-  
+  public JButton btnInicializar;
   private int itera;
   private String[] infoTramas;
 
@@ -139,13 +139,14 @@ public class Converter  extends JFrame{
     //15 nivel
     lblMsjRecibido = new JLabel("Mensaje recibido:");
     txtMsjRecibido = new JTextArea(1,1);
+    btnInicializar = new JButton("Inicializar");
 
 
     ButtonHandler objButtonHandler = new ButtonHandler(this);
 
     btnEnviar.addActionListener(objButtonHandler);
     btnResponder.addActionListener(objButtonHandler);
-
+    btnInicializar.addActionListener(objButtonHandler);
     JPanel UIPanelTrans = new JPanel();
 
     //****************************************************
@@ -224,7 +225,7 @@ public class Converter  extends JFrame{
     UIPanelTrans.add(txtRIND2);
 
     UIPanelTrans.add(btnResponder);
-
+    UIPanelTrans.add(btnInicializar);
     UIPanelTrans.add(lblTramaRecibida);
     UIPanelTrans.add(lblMsjRecibido);
     UIPanelTrans.add(txtMsjRecibido);
@@ -464,6 +465,9 @@ public class Converter  extends JFrame{
     gbc.gridx = 1;
     gbc.gridy = 14;
     gridbag.setConstraints(txtMsjRecibido, gbc);
+    gbc.gridx = 10;
+    gbc.gridy = 14;
+    gridbag.setConstraints(btnInicializar, gbc);
 
     gbc.insets.left = 2;
     gbc.insets.right = 2;
@@ -493,7 +497,7 @@ public class Converter  extends JFrame{
     txtDAT.setText("0");
     txtNUM.setText("0");
     txtCTR.setText("0");
-    txtINF.setText("EJEMPLO");
+    txtINF.setText("------");
     txtIND2.setText("10000001");
     txtMensajeTranscribir.setText("Escriba aqui su mensaje");
     txtnFrames.setText("X");
@@ -655,9 +659,15 @@ class ButtonHandler implements ActionListener {
   public void actionPerformed(ActionEvent e) {
     tramaTransmisora = new Trama(objConverter.getIND1(), objConverter.getACK(), 
     objConverter.getENQ(), objConverter.getCTR(), objConverter.getDAT(), objConverter.getPPT(), objConverter.getLPT(), objConverter.getNUM(), objConverter.getINF());
+    if( e.getActionCommand().equals("Inicializar")){
+      objConverter.intialize();
+      iteracion =0;
+    }
     if (e.getActionCommand().equals("Enviar")) {
       System.out.println("nueva iteracion");
-
+      if (iteracion > 5){
+        objConverter.intialize();
+      }
       if (tramaTransmisora.validate()){
         if(tramaTransmisora.permissToT() && objConverter.casillasPermiso()){
           //Caso en que se este pidiendo control
@@ -678,6 +688,8 @@ class ButtonHandler implements ActionListener {
           if ( mensaje == null || tramaTransmisora.NUM > mensaje.length ){
             JOptionPane.showMessageDialog(null, "Frame no encontrado en el mensaje");
           }else{
+            System.out.println("iteracion"+iteracion);
+            System.out.println(mensaje.length);
             objConverter.txtINF.setText(mensaje[tramaTransmisora.NUM-1]);
             tramaTransmisora.info = mensaje[tramaTransmisora.NUM-1];
             tranCase2(tramaTransmisora.NUM);
@@ -690,9 +702,10 @@ class ButtonHandler implements ActionListener {
             iteracion ++;
           }
         }
-      } else 
+      } else{
         System.out.println("Error en la trama");
-
+        JOptionPane.showMessageDialog(null, "Error en la trama");
+      } 
     }
     if (e.getActionCommand().equals("Responder")) {
       if(tramaReceptora.validate()){
@@ -706,19 +719,27 @@ class ButtonHandler implements ActionListener {
           String numF = Integer.toString(ptes.length);
           objConverter.txtnFrames.setText(numF);
         }else if (tramaReceptora.recibida()){
-          System.out.println(tramaReceptora.ENQ);
-          if (tramaReceptora.ENQ == 0){
-            mensajeRecibido[tramaTransmisora.NUM-1] = tramaTransmisora.info;
-            String aux = "";
-            for (int i=0; i<mensajeRecibido.length; i++){
-              if(mensajeRecibido[i] !=null){
-                System.out.println(mensajeRecibido[i]);
-                aux = aux + mensajeRecibido[i] + " ";
+          System.out.println("iteracion"+iteracion);
+          System.out.println("mensaje"+mensaje.length);
+          if (iteracion <= mensaje.length){
+            if (tramaTransmisora.NUM-1 < 0){
+              JOptionPane.showMessageDialog(null, "Verifique el frame enviado");
+              objConverter.btnEnviar.setEnabled(true);
+              objConverter.btnResponder.setEnabled(false);
+            }else{
+              mensajeRecibido[tramaTransmisora.NUM-1] = tramaTransmisora.info;
+              String aux = "";
+              for (int i=0; i<mensajeRecibido.length; i++){
+                if(mensajeRecibido[i] !=null){
+                  System.out.println(mensajeRecibido[i]);
+                  aux = aux + mensajeRecibido[i] + " ";
+                }
               }
+              objConverter.setTRMessageRcb(aux);
+              recepCase2(tramaTransmisora.NUM);
             }
-            objConverter.setTRMessageRcb(aux);
-            recepCase2(tramaTransmisora.NUM);
           }else{
+            System.out.println(tramaTransmisora.NUM-1);
             mensajeRecibido[tramaTransmisora.NUM-1] = tramaTransmisora.info;
             String aux = "";
             for (int i=0; i<mensajeRecibido.length; i++){
